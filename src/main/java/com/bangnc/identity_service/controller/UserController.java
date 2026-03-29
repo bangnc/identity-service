@@ -13,6 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @RestController
@@ -34,7 +35,7 @@ public class UserController {
         log.info("UserName: {}", authentication.getName());
         var x = authentication.getAuthorities();
         authentication.getAuthorities()
-                .forEach(a -> log.info(a.getAuthority().toUpperCase()));
+                .forEach(a -> log.info(Objects.requireNonNull(a.getAuthority()).toUpperCase()));
         return userService.getUsers();
 
     }
