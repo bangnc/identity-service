@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -22,13 +23,14 @@ public class UserController {
     private UserService userService;
 
     @PostMapping()
-    ApiResponse<UserResponse> createUser(@RequestBody @Valid UserCreationRequest request){
+    ApiResponse<UserResponse> createUser(@RequestBody @Valid UserCreationRequest request) {
         ApiResponse<UserResponse> apiResponse = new ApiResponse<>();
         apiResponse.setResult(userService.createRequest(request));
         return apiResponse;
     }
+
     @GetMapping()
-    List<User> getUsers () {
+    List<User> getUsers() {
 
         var authentication = SecurityContextHolder.getContext().getAuthentication();
         log.info("UserName: {}", authentication.getName());
@@ -38,6 +40,7 @@ public class UserController {
         return userService.getUsers();
 
     }
+
     @GetMapping("/{userId}")
     UserResponse getUser(@PathVariable("userId") String userId) {
         return userService.getUser(userId);
@@ -46,13 +49,13 @@ public class UserController {
     @GetMapping("/myInfo")
     ApiResponse<UserResponse> getMyInfo() {
         return ApiResponse.<UserResponse>builder()
-                        .result(userService.getMyInfo())
+                .result(userService.getMyInfo())
                 .build();
     }
 
     @PutMapping("/{userId}")
-    UserResponse updateUser(@PathVariable String userId, @RequestBody UserUpdateRequest request){
-        return userService.updateUser(userId,request);
+    UserResponse updateUser(@PathVariable String userId, @RequestBody UserUpdateRequest request) {
+        return userService.updateUser(userId, request);
     }
 
     @DeleteMapping("/{userId}")

@@ -22,20 +22,20 @@ import java.util.HashSet;
 @Slf4j
 public class ApplicationInitConfig {
 
-    private  PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
 
     @Bean
-    ApplicationRunner applicationRunner(UserRepository userRepository){
+    ApplicationRunner applicationRunner(UserRepository userRepository) {
         return args -> {
             var check = userRepository.findByUserName("admin").isEmpty();
-            if(check) {
+            if (check) {
                 var roles = new HashSet<String>();
                 roles.add(Role.ADMIN.name());
 
                 User user = User.builder()
                         .userName("admin")
                         .passWord(passwordEncoder.encode("admin"))
-                        .roles(roles)
+                        //.roles(roles)
                         .build();
                 userRepository.save(user);
                 log.warn("admin user has been create with default password");

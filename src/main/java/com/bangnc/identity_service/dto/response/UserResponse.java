@@ -1,5 +1,6 @@
 package com.bangnc.identity_service.dto.response;
 
+import com.bangnc.identity_service.entity.Role;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -12,10 +13,10 @@ import java.util.Set;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserResponse {
-     String id;
-     String userName;
-     String firstName;
-     String lastName;
-     LocalDate dob;
-     Set<String> roles;
+    String id;
+    String userName;
+    String firstName;
+    String lastName;
+    LocalDate dob;
+    Set<Role> roles;
 }

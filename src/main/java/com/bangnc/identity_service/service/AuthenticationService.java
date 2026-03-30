@@ -38,7 +38,7 @@ public class AuthenticationService {
     UserRepository userRepository;
     @NonFinal
     @Value("${jwt.signerKey}")
-    protected  String SIGNER_KEY;
+    protected String SIGNER_KEY;
 
     public IntrospectResponse introspect(IntrospectRequest request)
             throws JOSEException, ParseException {
@@ -47,18 +47,19 @@ public class AuthenticationService {
         SignedJWT signedJWT = SignedJWT.parse(token);
 
         Date expiryTime = signedJWT.getJWTClaimsSet().getExpirationTime();
-        var verified =  signedJWT.verify(verifier);
+        var verified = signedJWT.verify(verifier);
         return IntrospectResponse.builder()
                 .valid(verified && expiryTime.after(new Date()))
                 .build();
     }
-    public AuthenticationResponse authenticate(AuthenticationRequest request){
+
+    public AuthenticationResponse authenticate(AuthenticationRequest request) {
         var user = userRepository.findByUserName(request.getUsername())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         var authenticated = passwordEncoder.matches(request.getPassword(), user.getPassWord());
-        if(!authenticated) {
-            throw  new AppException(ErrorCode.UNAUTHENTICATED);
+        if (!authenticated) {
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
         }
         var token = generateToken(user);
         return AuthenticationResponse.builder()
@@ -66,6 +67,7 @@ public class AuthenticationService {
                 .authenticated(true)
                 .build();
     }
+
     private String generateToken(User user) {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
@@ -77,20 +79,21 @@ public class AuthenticationService {
                 .build();
 
         Payload payload = new Payload(jwtClaimsSet.toJSONObject());
-        JWSObject jwsObject = new JWSObject(header,payload);
+        JWSObject jwsObject = new JWSObject(header, payload);
         try {
             jwsObject.sign(new MACSigner(SIGNER_KEY.getBytes()));
-            return  jwsObject.serialize();
+            return jwsObject.serialize();
         } catch (Exception e) {
             log.error("Can not create token");
             throw new RuntimeException(e);
         }
 
     }
-    private  String buildScope(User user){
+
+    private String buildScope(User user) {
         StringJoiner stringJoiner = new StringJoiner(" ");
-        if(!CollectionUtils.isEmpty(user.getRoles())){
-            user.getRoles().forEach(stringJoiner::add);
+        if (!CollectionUtils.isEmpty(user.getRoles())) {
+            // user.getRoles().forEach(stringJoiner::add);
 
         }
         return stringJoiner.toString();
